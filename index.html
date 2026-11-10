@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>I²C Interface & Protocol — Interactive Lecture</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --master-color: #3b82f6;
+      --slave-color: #10b981;
+      --border-color: #334155;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 60px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-bottom: 1px solid var(--border-color);
+      padding: 2.5rem 1rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    section {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      color: var(--accent);
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+    }
+
+    h3 {
+      color: #e2e8f0;
+      font-size: 1.2rem;
+      margin-top: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p, li {
+      color: #cbd5e1;
+      margin-bottom: 0.75rem;
+    }
+
+    ul { padding-left: 1.5rem; }
+
+    .highlight-box {
+      background: rgba(56, 189, 248, 0.08);
+      border-left: 4px solid var(--accent);
+      padding: 1rem;
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+
+    /* Controls & Simulator UI */
+    .sim-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      background: #0f172a;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .sim-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    select, input, button {
+      background: #1e293b;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    button {
+      background: var(--accent);
+      color: #0f172a;
+      font-weight: 600;
+      border: none;
+      transition: background 0.2s;
+    }
+
+    button:hover { background: var(--accent-hover); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    canvas {
+      width: 100%;
+      height: 440px;
+      background-color: #090d16;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      display: block;
+    }
+
+    .status-panel {
+      margin-top: 1rem;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .status-panel { grid-template-columns: 1fr; }
+    }
+
+    .status-item { font-size: 0.95rem; }
+    .status-item span.val { color: var(--accent); font-weight: bold; }
+
+    /* Bus Visualizer */
+    .bus-canvas {
+      width: 100%;
+      height: 220px;
+      background: #090d16;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Quiz styling */
+    .quiz-card {
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .quiz-option {
+      display: block;
+      padding: 0.6rem 1rem;
+      margin: 0.4rem 0;
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--accent);
+      background: #26334d;
+    }
+
+    .quiz-option.correct { background: rgba(16, 185, 129, 0.2); border-color: #10b981; }
+    .quiz-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-left: 0.5rem;
+    }
+    .badge-master { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
+    .badge-slave { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>I²C (Inter-Integrated Circuit) Bus Protocol</h1>
+    <p>Interactive Technical Lecture & Protocol Simulator</p>
+  </header>
+
+  <div class="container">
+
+    <!-- Overview Section -->
+    <section>
+      <h2>7.15.1. General Information & Architecture</h2>
+      <p>
+        The <strong>I²C interface (Inter Integrated Circuit)</strong> was developed by engineers at Philips as a straightforward way to connect integrated circuits and nodes within a single electronic system. The goal was to allow all integrated circuits to communicate using a shared, standardized interface to minimize interconnect complexity. The resulting two-wire serial bus is widely known as the <strong>I²C bus</strong>.
+      </p>
+
+      <div class="highlight-box">
+        <h3>Key Characteristics of the I²C Bus:</h3>
+        <ul>
+          <li><strong>Two Lines Required:</strong> <strong>SDA (Serial Data Line)</strong> for data transfer, and <strong>SCL (Serial Clock Line)</strong> for clock synchronization. Microcontroller pins connected to these lines are typically <code>RC3/SCL</code> and <code>RC4/SDA</code>.</li>
+          <li><strong>Open-Drain Architecture:</strong> Drivers on the bus are open-drain type. Both SCL and SDA lines must be connected to high level ($V_{DD}$) via <strong>pull-up resistors</strong>. When the bus is idle, both lines stay HIGH.</li>
+          <li><strong>Unique Slave Addresses:</strong> Every device connected to the bus possesses a unique hardware address used for target selection.</li>
+          <li><strong>Master / Slave Roles:</strong> Communication is always initiated by a <strong>master</strong> device (typically a microcontroller), which controls clock generation ($SCL$) and frame sequence. The target device acts as a <strong>slave</strong>.</li>
+          <li><strong>Multi-Master Capability:</strong> Multiple master devices can be connected to the same bus (multi-master mode).</li>
+          <li><strong>Speed Modes:</strong> Standard Mode (<strong>100 kbit/s</strong>), Fast Mode (<strong>400 kbit/s</strong>), and High-Speed Mode (<strong>3.4 Mbit/s</strong>). Devices running at different supported speeds can coexist on the same physical bus.</li>
+          <li><strong>Capacitive Limit:</strong> The total number of devices connected to the bus is constrained primarily by the total parasitic bus capacitance (maximum <strong>400 pF</strong>).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Bus Schematic Interactive -->
+    <section>
+      <h2>Bus Wiring Diagram & Physical Layer</h2>
+      <p>
+        Below is an interactive representation of the shared I²C bus architecture. Notice how both lines rely on pull-up resistors to maintain a HIGH state ($1$) when idle.
+      </p>
+      <canvas id="busCanvas" class="bus-canvas"></canvas>
+    </section>
+
+    <!-- Protocol Details Section -->
+    <section>
+      <h2>7.15.1.2. Protocol Rules & Transfer Logic</h2>
+      <p>
+        Communication on the I²C bus strictly adheres to state conditions governed by $SCL$ and $SDA$:
+      </p>
+      
+      <h3>1. Bus Idle & Start / Stop Conditions</h3>
+      <ul>
+        <li><strong>Bus Idle:</strong> Both $SDA$ and $SCL$ remain HIGH.</li>
+        <li><strong>START Condition ($S$):</strong> Initiated by the master by driving $SDA$ from HIGH to LOW while $SCL$ remains HIGH. This marks the bus as "busy".</li>
+        <li><strong>Repeated START Condition ($Sr$):</strong> Issued during an ongoing transaction (without generating a STOP first) to switch transmission direction or register targeting cleanly.</li>
+        <li><strong>STOP Condition ($P$):</strong> Initiated by the master by releasing $SDA$ from LOW to HIGH while $SCL$ is HIGH. This releases the bus back to the idle state.</li>
+      </ul>
+
+      <h3>2. Data Validity & Bit Sampling</h3>
+      <p>
+        Data on the $SDA$ line must remain <strong>stable</strong> throughout the entire HIGH period of the $SCL$ clock pulse. $SDA$ state transitions are only allowed while $SCL$ is LOW. Changing $SDA$ while $SCL$ is HIGH is exclusively interpreted as a START or STOP condition.
+      </p>
+
+      <h3>3. Address Frame & Acknowledgement (ACK / NACK)</h3>
+      <p>
+        Data is transmitted serially in 8-bit bytes (MSB first). After every 8 bits, a 9th clock pulse is generated by the master for acknowledgement:
+      </p>
+      <ul>
+        <li><strong>ACK (Acknowledge):</strong> The receiver (Slave during write, Master during read) pulls $SDA$ LOW during the 9th clock pulse.</li>
+        <li><strong>NACK (Not Acknowledge):</strong> The receiver leaves $SDA$ HIGH. Master uses NACK during the final read byte to signal to the slave that data transmission should cease before generating STOP.</li>
+      </ul>
+    </section>
+
+    <!-- Interactive Simulator Section -->
+    <section>
+      <h2>Interactive I²C Sequence & Timing Simulator</h2>
+      <p>
+        Use the controls below to step through or auto-play complete I²C register transactions: <strong>Register Write Sequence</strong> and <strong>Register Read Sequence (with Repeated START)</strong>.
+      </p>
+
+      <div class="sim-controls">
+        <div class="sim-group">
+          <label for="modeSelect">Transaction Mode:</label>
+          <select id="modeSelect">
+            <option value="write">Register Write Sequence (S + Addr+W + Reg + Data + P)</option>
+            <option value="read">Register Read Sequence (S + Addr+W + Reg + Sr + Addr+R + ReadData + NACK + P)</option>
+          </select>
+        </div>
+
+        <div class="sim-group">
+          <label for="regInput">Reg Addr (Hex):</label>
+          <input id="regInput" type="text" value="0x20" size="4" maxlength="4" />
+        </div>
+
+        <div class="sim-group">
+          <button id="btnPlay">▶ Play</button>
+          <button id="btnPause" disabled>⏸ Pause</button>
+          <button id="btnStepBack">⏮ Step Back</button>
+          <button id="btnStepNext">⏭ Step Next</button>
+          <button id="btnReset">↺ Reset</button>
+        </div>
+      </div>
+
+      <!-- Canvas Timing Diagram -->
+      <canvas id="timingCanvas"></canvas>
+
+      <div class="status-panel">
+        <div class="status-item">Current Step: <span id="stepTitle" class="val">1. Idle</span></div>
+        <div class="status-item">Line Driven By: <span id="driverInfo" class="val">Master (High Impedance Pull-up)</span></div>
+        <div class="status-item" style="grid-column: span 2;">
+          Explanation: <span id="stepDesc" class="val">Bus is idle. SDA and SCL are both pulled HIGH by pull-up resistors.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quiz Module -->
+    <section>
+      <h2>Knowledge Check</h2>
+      <div id="quizContainer"></div>
+    </section>
+
+  </div>
+
+  <script>
+    // --- 1. BUS SCHEMATIC CANVAS ---
+    function drawBusSchematic() {
+      const canvas = document.getElementById('busCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width = canvas.parentElement.clientWidth - 40;
+      const h = canvas.height = 220;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Lines SCL and SDA
+      const ySCL = 60;
+      const ySDA = 110;
+
+      // Draw VDD Rail
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(40, 20);
+      ctx.lineTo(w - 40, 20);
+      ctx.stroke();
+      ctx.fillStyle = '#ef4444';
+      ctx.font = '12px sans-serif';
+      ctx.fillText('+Vdd', 10, 24);
+
+      // Draw SCL line
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(40, ySCL);
+      ctx.lineTo(w - 40, ySCL);
+      ctx.stroke();
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText('SCL (RC3)', 10, ySCL + 4);
+
+      // Draw SDA line
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(40, ySDA);
+      ctx.lineTo(w - 40, ySDA);
+      ctx.stroke();
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillText('SDA (RC4)', 10, ySDA + 4);
+
+      // Pull up resistors
+      drawResistor(ctx, 100, 20, ySCL, 'R_pullup');
+      drawResistor(ctx, 140, 20, ySDA, 'R_pullup');
+
+      // Devices
+      const devWidth = 100;
+      const devHeight = 60;
+      const devices = [
+        { name: 'Master (MCU)', x: 200, role: 'Master' },
+        { name: 'Slave 1', x: 380, role: 'Slave' },
+        { name: 'Slave 2', x: 560, role: 'Slave' },
+        { name: 'Slave N', x: 740, role: 'Slave' }
+      ];
+
+      devices.forEach(dev => {
+        if (dev.x + devWidth > w) return;
+        ctx.fillStyle = dev.role === 'Master' ? '#1e3a8a' : '#064e3b';
+        ctx.strokeStyle = dev.role === 'Master' ? '#3b82f6' : '#10b981';
+        ctx.lineWidth = 2;
+        ctx.fillRect(dev.x, ySDA + 40, devWidth, devHeight);
+        ctx.strokeRect(dev.x, ySDA + 40, devWidth, devHeight);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(dev.name, dev.x + devWidth/2, ySDA + 75);
+
+        // Connect lines
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.5;
+
+        // SCL connect
+        ctx.beginPath();
+        ctx.moveTo(dev.x + 30, ySCL);
+        ctx.lineTo(dev.x + 30, ySDA + 40);
+        ctx.stroke();
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(dev.x + 30, ySCL, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // SDA connect
+        ctx.beginPath();
+        ctx.moveTo(dev.x + 70, ySDA);
+        ctx.lineTo(dev.x + 70, ySDA + 40);
+        ctx.stroke();
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath();
+        ctx.arc(dev.x + 70, ySDA, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    function drawResistor(ctx, x, y1, y2, label) {
+      ctx.strokeStyle = '#cbd5e1';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x, y1);
+      const mid = (y1 + y2) / 2;
+      ctx.lineTo(x, mid - 15);
+
+      // Zigzag
+      ctx.lineTo(x - 5, mid - 10);
+      ctx.lineTo(x + 5, mid - 5);
+      ctx.lineTo(x - 5, mid);
+      ctx.lineTo(x + 5, mid + 5);
+      ctx.lineTo(x - 5, mid + 10);
+      ctx.lineTo(x, mid + 15);
+
+      ctx.lineTo(x, y2);
+      ctx.stroke();
+
+      ctx.fillStyle = '#cbd5e1';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x + 25, mid + 4);
+    }
+
+    // --- 2. TIMING & SEQUENCER SIMULATOR ---
+    const writeSteps = [
+      { type: 'IDLE', title: '1. Bus Idle', driver: 'None (Pull-up HIGH)', desc: 'Master checks bus. Both SDA and SCL are HIGH.' },
+      { type: 'START', title: '2. START Condition (S)', driver: 'Master', desc: 'Master drives SDA from HIGH to LOW while SCL is HIGH.' },
+      { type: 'FRAME', title: '3. 7-bit Slave Address (0x48)', driver: 'Master', data: '1001000', desc: 'Master transmits slave address 0x48.' },
+      { type: 'BIT', title: '4. R/W Bit = 0 (Write)', driver: 'Master', val: '0', desc: 'Master sets R/W = 0 indicating a Register Write transfer.' },
+      { type: 'ACK', title: '5. Slave ACK', driver: 'Slave', val: '0 (ACK)', desc: 'Matching Slave recognizes address and pulls SDA LOW during 9th SCL pulse.' },
+      { type: 'FRAME', title: '6. Register Address (0x20)', driver: 'Master', data: '00100000', desc: 'Master sends target Register Address 0x20.' },
+      { type: 'ACK', title: '7. Slave ACK', driver: 'Slave', val: '0 (ACK)', desc: 'Slave acknowledges reception of register address byte.' },
+      { type: 'FRAME', title: '8. Data Byte N (0xAB)', driver: 'Master', data: '10101011', desc: 'Master transmits data to be written into Register N.' },
+      { type: 'ACK', title: '9. Slave ACK', driver: 'Slave', val: '0 (ACK)', desc: 'Slave pulls SDA LOW acknowledging data byte receipt.' },
+      { type: 'STOP', title: '10. STOP Condition (P)', driver: 'Master', desc: 'Master releases SDA from LOW to HIGH while SCL is HIGH, freeing the bus.' }
+    ];
+
+    const readSteps = [
+      { type: 'IDLE', title: '1. Bus Idle', driver: 'None (Pull-up HIGH)', desc: 'Bus is free.' },
+      { type: 'START', title: '2. START Condition (S)', driver: 'Master', desc: 'Master generates START condition.' },
+      { type: 'FRAME', title: '3. 7-bit Slave Address (0x48)', driver: 'Master', data: '1001000', desc: 'Master transmits target slave address.' },
+      { type: 'BIT', title: '4. R/W Bit = 0 (Write Reg Target)', driver: 'Master', val: '0', desc: 'Master transmits R/W=0 to set register pointer first.' },
+      { type: 'ACK', title: '5. Slave ACK', driver: 'Slave', val: '0 (ACK)', desc: 'Slave acknowledges address.' },
+      { type: 'FRAME', title: '6. Register Address (0x20)', driver: 'Master', data: '00100000', desc: 'Master sends targeted register address.' },
+      { type: 'ACK', title: '7. Slave ACK', driver: 'Slave', val: '0 (ACK)', desc: 'Slave acknowledges receipt of register address.' },
+      { type: 'START', title: '8. Repeated START (Sr)', driver: 'Master', desc: 'Master issues Repeated START without releasing bus with STOP.' },
+      { type: 'FRAME', title: '9. 7-bit Slave Address (0x48)', driver: 'Master', data: '1001000', desc: 'Master re-transmits slave address.' },
+      { type: 'BIT', title: '10. R/W Bit = 1 (Read)', driver: 'Master', val: '1', desc: 'Master sets R/W = 1 switching protocol into Read mode.' },
+      { type: 'ACK', title: '11. Slave ACK', driver: 'Slave', val: '0 (ACK)', desc: 'Slave acknowledges switch to Read mode.' },
+      { type: 'FRAME', title: '12. Read Data Byte N (0xFE)', driver: 'Slave', data: '11111110', desc: 'Slave transmits requested register contents back to Master.' },
+      { type: 'ACK', title: '13. Master NACK', driver: 'Master', val: '1 (NACK)', desc: 'Master leaves SDA HIGH (NACK) to signal end of read transfer.' },
+      { type: 'STOP', title: '14. STOP Condition (P)', driver: 'Master', desc: 'Master generates STOP condition to release bus.' }
+    ];
+
+    let currentMode = 'write';
+    let currentStepIdx = 0;
+    let isPlaying = false;
+    let playTimer = null;
+
+    function getActiveSteps() {
+      return currentMode === 'write' ? writeSteps : readSteps;
+    }
+
+    function renderSimulator() {
+      const steps = getActiveSteps();
+      const step = steps[currentStepIdx];
+
+      // Update text status
+      document.getElementById('stepTitle').innerText = step.title;
+      document.getElementById('driverInfo').innerText = step.driver;
+      document.getElementById('stepDesc').innerText = step.desc;
+
+      const canvas = document.getElementById('timingCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width = canvas.parentElement.clientWidth - 40;
+      const h = canvas.height = 440;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // --- Draw Block Sequence Diagram (Fig 6.18 style) ---
+      const blockY = 30;
+      const blockH = 50;
+      let startX = 20;
+
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+
+      steps.forEach((st, idx) => {
+        let blockW = 40;
+        let label = '';
+        let isMaster = true;
+
+        if (st.type === 'START') { label = 'S'; blockW = 35; }
+        else if (st.type === 'STOP') { label = 'P'; blockW = 35; }
+        else if (st.type === 'FRAME' && idx === 2) { label = '7-bit Slave Addr'; blockW = 110; }
+        else if (st.type === 'FRAME' && (idx === 5 || idx === 5)) { label = 'Reg Addr N'; blockW = 90; }
+        else if (st.type === 'FRAME' && st.driver === 'Master') { label = 'Write Data'; blockW = 90; }
+        else if (st.type === 'FRAME' && st.driver === 'Slave') { label = 'Read Data'; blockW = 90; isMaster = false; }
+        else if (st.type === 'BIT') { label = st.val === '0' ? 'W (0)' : 'R (1)'; blockW = 45; }
+        else if (st.type === 'ACK' && st.driver === 'Slave') { label = 'ACK'; blockW = 40; isMaster = false; }
+        else if (st.type === 'ACK' && st.driver === 'Master') { label = 'NACK'; blockW = 45; }
+
+        if (st.type !== 'IDLE') {
+          // Draw Box
+          ctx.fillStyle = idx === currentStepIdx ? '#f59e0b' : (isMaster ? '#1e3a8a' : '#064e3b');
+          ctx.strokeStyle = idx === currentStepIdx ? '#ffffff' : (isMaster ? '#3b82f6' : '#10b981');
+          ctx.lineWidth = idx === currentStepIdx ? 3 : 1.5;
+
+          ctx.fillRect(startX, blockY, blockW, blockH);
+          ctx.strokeRect(startX, blockY, blockW, blockH);
+
+          // Text inside block
+          ctx.fillStyle = '#ffffff';
+          ctx.fillText(label, startX + blockW / 2, blockY + 30);
+
+          startX += blockW + 4;
+        }
+      });
+
+      // --- Draw Waveforms (SCL and SDA) ---
+      const waveY_SCL = 150;
+      const waveY_SDA = 290;
+      const waveH = 50;
+
+      // Axis labels
+      ctx.fillStyle = '#38bdf8';
+      ctx.textAlign = 'left';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('SCL (Serial Clock)', 20, waveY_SCL - 15);
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillText('SDA (Serial Data)', 20, waveY_SDA - 15);
+
+      // Grid guidelines
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+
+      // High / Low level guidelines
+      [waveY_SCL, waveY_SCL + waveH, waveY_SDA, waveY_SDA + waveH].forEach(y => {
+        ctx.beginPath();
+        ctx.moveTo(20, y);
+        ctx.lineTo(w - 20, y);
+        ctx.stroke();
+      });
+
+      // Render signal line steps up to current step
+      const stepWidth = (w - 60) / steps.length;
+
+      // Draw SCL Signal
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      let curX = 30;
+      ctx.moveTo(curX, waveY_SCL); // Start HIGH
+
+      steps.forEach((st, i) => {
+        const nextX = curX + stepWidth;
+        if (i > currentStepIdx) return;
+
+        if (st.type === 'IDLE' || st.type === 'START' || st.type === 'STOP') {
+          ctx.lineTo(nextX, waveY_SCL);
+        } else {
+          // Clock pulses
+          const mid = curX + stepWidth / 2;
+          ctx.lineTo(curX + 5, waveY_SCL + waveH);
+          ctx.lineTo(mid, waveY_SCL + waveH);
+          ctx.lineTo(mid + 5, waveY_SCL);
+          ctx.lineTo(nextX, waveY_SCL);
+        }
+        curX = nextX;
+      });
+      ctx.stroke();
+
+      // Draw SDA Signal
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      curX = 30;
+      ctx.moveTo(curX, waveY_SDA); // Start HIGH
+
+      steps.forEach((st, i) => {
+        const nextX = curX + stepWidth;
+        if (i > currentStepIdx) return;
+
+        if (st.type === 'IDLE') {
+          ctx.lineTo(nextX, waveY_SDA);
+        } else if (st.type === 'START') {
+          ctx.lineTo(curX + stepWidth / 2, waveY_SDA);
+          ctx.lineTo(curX + stepWidth / 2 + 5, waveY_SDA + waveH);
+          ctx.lineTo(nextX, waveY_SDA + waveH);
+        } else if (st.type === 'STOP') {
+          ctx.lineTo(curX + stepWidth / 2, waveY_SDA + waveH);
+          ctx.lineTo(curX + stepWidth / 2 + 5, waveY_SDA);
+          ctx.lineTo(nextX, waveY_SDA);
+        } else if (st.type === 'ACK') {
+          const val = st.val.includes('0') ? waveY_SDA + waveH : waveY_SDA;
+          ctx.lineTo(curX + 5, val);
+          ctx.lineTo(nextX, val);
+        } else {
+          // Data bits
+          const val = st.val === '0' || (st.data && st.data[0] === '0') ? waveY_SDA + waveH : waveY_SDA;
+          ctx.lineTo(curX + 5, val);
+          ctx.lineTo(nextX, val);
+        }
+        curX = nextX;
+      });
+      ctx.stroke();
+    }
+
+    // --- Control Handlers ---
+    document.getElementById('modeSelect').addEventListener('change', (e) => {
+      currentMode = e.target.value;
+      currentStepIdx = 0;
+      stopPlay();
+      renderSimulator();
+    });
+
+    document.getElementById('btnStepNext').addEventListener('click', () => {
+      const steps = getActiveSteps();
+      if (currentStepIdx < steps.length - 1) {
+        currentStepIdx++;
+        renderSimulator();
+      }
+    });
+
+    document.getElementById('btnStepBack').addEventListener('click', () => {
+      if (currentStepIdx > 0) {
+        currentStepIdx--;
+        renderSimulator();
+      }
+    });
+
+    document.getElementById('btnReset').addEventListener('click', () => {
+      currentStepIdx = 0;
+      stopPlay();
+      renderSimulator();
+    });
+
+    document.getElementById('btnPlay').addEventListener('click', () => {
+      isPlaying = true;
+      document.getElementById('btnPlay').disabled = true;
+      document.getElementById('btnPause').disabled = false;
+      playTimer = setInterval(() => {
+        const steps = getActiveSteps();
+        if (currentStepIdx < steps.length - 1) {
+          currentStepIdx++;
+          renderSimulator();
+        } else {
+          stopPlay();
+        }
+      }, 1500);
+    });
+
+    document.getElementById('btnPause').addEventListener('click', stopPlay);
+
+    function stopPlay() {
+      isPlaying = false;
+      if (playTimer) clearInterval(playTimer);
+      document.getElementById('btnPlay').disabled = false;
+      document.getElementById('btnPause').disabled = true;
+    }
+
+    // --- 3. QUIZ MODULE ---
+    const quizData = [
+      {
+        q: "What physical line configuration is required for I²C SDA and SCL lines?",
+        options: [
+          "Push-pull drivers with active high pull-downs",
+          "Open-drain outputs connected to +Vdd via pull-up resistors",
+          "Differential voltage pairs with 120 ohm termination",
+          "Direct connection without resistors"
+        ],
+        answer: 1
+      },
+      {
+        q: "How is an I²C START condition defined?",
+        options: [
+          "SCL transitions from HIGH to LOW while SDA is LOW",
+          "SDA transitions from HIGH to LOW while SCL is HIGH",
+          "SDA transitions from LOW to HIGH while SCL is HIGH",
+          "Both SDA and SCL transition LOW simultaneously"
+        ],
+        answer: 1
+      },
+      {
+        q: "During register reading, how does the Master indicate it has received the final byte before STOP?",
+        options: [
+          "Generates an ACK (SDA driven LOW)",
+          "Generates a NACK (SDA left HIGH)",
+          "Inverts SCL clock polarity",
+          "Holds SCL line LOW indefinitely"
+        ],
+        answer: 1
+      }
+    ];
+
+    function buildQuiz() {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = '';
+
+      quizData.forEach((qObj, qIdx) => {
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+
+        const qTitle = document.createElement('h3');
+        qTitle.innerText = `${qIdx + 1}. ${qObj.q}`;
+        card.appendChild(qTitle);
+
+        qObj.options.forEach((optText, optIdx) => {
+          const btn = document.createElement('div');
+          btn.className = 'quiz-option';
+          btn.innerText = optText;
+
+          btn.addEventListener('click', () => {
+            const allOpts = card.querySelectorAll('.quiz-option');
+            allOpts.forEach(o => o.classList.remove('correct', 'incorrect'));
+
+            if (optIdx === qObj.answer) {
+              btn.classList.add('correct');
+            } else {
+              btn.classList.add('incorrect');
+              allOpts[qObj.answer].classList.add('correct');
+            }
+          });
+
+          card.appendChild(btn);
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    // Init Page
+    window.addEventListener('load', () => {
+      drawBusSchematic();
+      renderSimulator();
+      buildQuiz();
+    });
+
+    window.addEventListener('resize', () => {
+      drawBusSchematic();
+      renderSimulator();
+    });
+  </script>
+</body>
+</html>
