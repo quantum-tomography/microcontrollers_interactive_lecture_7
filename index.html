@@ -464,17 +464,19 @@
                         </li>
                     </ul>
 
-                    <!-- Visual Frame Diagram -->
+                    <!-- Visual Frame Diagram: Example I2C Write Transaction -->
                     <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] font-mono space-y-2">
-                        <div class="text-slate-400 mb-1">Standard 1-Byte Frame Sequence:</div>
+                        <div class="text-slate-400 mb-1">Example I²C Write Transaction:</div>
                         <div class="flex items-center gap-1 overflow-x-auto pb-1 text-center font-bold">
-                            <span class="px-2 py-1 bg-emerald-950 border border-emerald-600 text-emerald-400 rounded">S</span>
-                            <span class="px-2 py-1 bg-slate-800 border border-slate-700 text-cyan-300 rounded flex-1">Bit 7 (MSB)</span>
-                            <span class="px-2 py-1 bg-slate-800 border border-slate-700 text-slate-300 rounded">...</span>
-                            <span class="px-2 py-1 bg-slate-800 border border-slate-700 text-cyan-300 rounded flex-1">Bit 0 (LSB/RW)</span>
-                            <span class="px-2 py-1 bg-purple-950 border border-purple-600 text-purple-300 rounded">ACK (Bit 9)</span>
-                            <span class="px-2 py-1 bg-rose-950 border border-rose-600 text-rose-400 rounded">P</span>
+                            <span class="px-2 py-1 bg-emerald-950 border border-emerald-600 text-emerald-400 rounded shrink-0">S</span>
+                            <span class="px-2 py-1 bg-slate-800 border border-slate-700 text-cyan-300 rounded flex-1 min-w-[95px]">7-bit address</span>
+                            <span class="px-2 py-1 bg-slate-800 border border-slate-700 text-cyan-300 rounded shrink-0">R/W</span>
+                            <span class="px-2 py-1 bg-purple-950 border border-purple-600 text-purple-300 rounded shrink-0">ACK</span>
+                            <span class="px-2 py-1 bg-slate-800 border border-slate-700 text-cyan-300 rounded flex-1 min-w-[80px]">8-bit data</span>
+                            <span class="px-2 py-1 bg-purple-950 border border-purple-600 text-purple-300 rounded shrink-0">ACK</span>
+                            <span class="px-2 py-1 bg-rose-950 border border-rose-600 text-rose-400 rounded shrink-0">P</span>
                         </div>
+                        <div class="text-slate-500 text-[10px] leading-relaxed">S = START, P = STOP, R/W = 0 for write. Each ACK occupies the ninth clock pulse after its 8-bit byte.</div>
                     </div>
                 </div>
 
