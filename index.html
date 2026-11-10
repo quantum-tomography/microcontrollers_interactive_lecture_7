@@ -231,7 +231,7 @@
             <div class="border-b border-slate-800 pb-4">
                 <h2 class="text-2xl font-bold text-white flex items-center gap-3">
                     <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 text-sm border border-cyan-500/20">2</span>
-                    Hardware & Bus Topology (Fig 7.28)
+                    Hardware & Bus Topology
                 </h2>
             </div>
 
@@ -243,7 +243,6 @@
                             <h3 class="font-semibold text-slate-100">Interactive Circuit Schematic</h3>
                             <p class="text-xs text-slate-400">Open-drain configuration with Pull-up Resistors ($R_P$) to $V_{DD}$</p>
                         </div>
-                        <span class="px-2.5 py-1 rounded bg-slate-800 text-cyan-400 text-xs font-mono border border-slate-700">Fig. 7.28 Concept</span>
                     </div>
 
                     <!-- SVG Schematic -->
@@ -375,7 +374,7 @@
             <div class="border-b border-slate-800 pb-4">
                 <h2 class="text-2xl font-bold text-white flex items-center gap-3">
                     <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 text-sm border border-cyan-500/20">3</span>
-                    Protocol Rules & Bus Conditions (Fig 7.29)
+                    Protocol Rules & Bus Conditions
                 </h2>
             </div>
 
@@ -441,10 +440,10 @@
 
             <!-- Deep Dive: Frame Structure, ACK/NACK & Clock Stretching -->
             <div class="grid md:grid-cols-2 gap-6">
-                <!-- Byte Structure & ACK/NACK (Fig 7.30) -->
+                <!-- Byte Structure & ACK/NACK -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
                     <h3 class="text-lg font-semibold text-cyan-300 flex items-center gap-2">
-                        <i class="fa-solid fa-layer-group"></i> Byte Format & ACK Pulse (Fig 7.30)
+                        <i class="fa-solid fa-layer-group"></i> Byte Format & ACK Pulse
                     </h3>
                     <ul class="space-y-3 text-xs text-slate-300 leading-relaxed">
                         <li class="flex items-start gap-2">
@@ -511,7 +510,7 @@
                 <div>
                     <h2 class="text-2xl font-bold text-white flex items-center gap-3">
                         <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 text-sm border border-cyan-500/20">4</span>
-                        Interactive Register Read/Write Simulator (Fig. 6.18)
+                        Interactive Register Read/Write Simulator
                     </h2>
                     <p class="text-xs text-slate-400 mt-1">Simulate full multi-byte Register Write sequences and Register Read sequences with Repeated START (Sr).</p>
                 </div>
@@ -535,7 +534,7 @@
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
                 <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs font-mono">
                     <div class="lg:col-span-2">
-                        <label class="block text-slate-400 mb-1 font-semibold">Sequence Transaction Mode (Fig. 6.18):</label>
+                        <label class="block text-slate-400 mb-1 font-semibold">Sequence Transaction Mode:</label>
                         <select id="sim-mode" onchange="resetSim()" class="w-full bg-slate-950 border border-cyan-500/40 rounded-lg px-3 py-2 text-cyan-300 font-bold focus:outline-none focus:border-cyan-400">
                             <option value="write">a) Write Sequence to Slave Registers (Запис)</option>
                             <option value="read">b) Read Sequence with Repeated START (Четене)</option>
@@ -559,25 +558,14 @@
                     </div>
                 </div>
 
-                <!-- Canvas 1: Block Protocol Frame Visualizer (Fig 6.18 style) -->
+                <!-- Canvas 1: Block Protocol Frame Visualizer (style) -->
                 <div class="space-y-2">
                     <div class="flex items-center justify-between text-xs font-mono text-slate-400 px-1">
-                        <span><i class="fa-solid fa-cubes text-cyan-400 mr-1"></i> Protocol Block Sequence Visualizer (Fig. 6.18)</span>
+                        <span><i class="fa-solid fa-cubes text-cyan-400 mr-1"></i> Protocol Block Sequence Visualizer</span>
                         <span id="block-seq-title" class="text-cyan-400 font-semibold">Write Sequence Mode</span>
                     </div>
                     <div class="relative bg-slate-950 rounded-xl border border-slate-800 p-4 overflow-x-auto">
                         <canvas id="blockCanvas" width="950" height="90" class="w-full h-auto block"></canvas>
-                    </div>
-                </div>
-
-                <!-- Canvas 2: Synchronized Dual Oscilloscope (RC3/SCL & RC4/SDA Signals) -->
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between text-xs font-mono text-slate-400 px-1">
-                        <span><i class="fa-solid fa-wave-square text-pink-400 mr-1"></i> Hardware Oscilloscope Waveforms (RC3/SCL & RC4/SDA Pins)</span>
-                        <span class="text-slate-500 text-[11px]">Logic 1 = High (Pull-Up) | Logic 0 = Low (GND)</span>
-                    </div>
-                    <div class="relative bg-slate-950 rounded-xl border border-slate-800 p-4 signal-grid overflow-x-auto">
-                        <canvas id="scopeCanvas" width="950" height="180" class="w-full h-auto block"></canvas>
                     </div>
                 </div>
 
@@ -621,7 +609,6 @@
     <footer class="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-500">
         <div class="max-w-7xl mx-auto px-4 space-y-2">
             <p>I²C Protocol Interactive Educational Module — Built for GitHub Pages</p>
-            <p class="font-mono text-[11px] text-slate-600">Based on technical specifications: Fig 7.28 Bus Topology, Fig 7.29 Data Validity & Fig 7.30 ACK Generation.</p>
         </div>
     </footer>
 
@@ -651,7 +638,7 @@
                     "Toggling RC3/SCL pin 9 times"
                 ],
                 correct: 1,
-                explanation: "Fig. 6.18 (b): A Repeated START condition (Sr / S) re-initializes communication in Read mode without sending a STOP condition."
+                explanation: "A Repeated START condition (Sr / S) re-initializes communication in Read mode without sending a STOP condition."
             },
             {
                 id: 3,
@@ -663,7 +650,7 @@
                     "Neither, ACK is always sent"
                 ],
                 correct: 1,
-                explanation: "Fig. 6.18 (b) Step 6: On the last received byte, the Master does NOT generate an ACK (sends NACK), forcing the slave to release the bus so the Master can issue a STOP."
+                explanation: "(b) Step 6: On the last received byte, the Master does NOT generate an ACK (sends NACK), forcing the slave to release the bus so the Master can issue a STOP."
             },
             {
                 id: 4,
@@ -675,7 +662,7 @@
                     "SCL clock speed doubles automatically"
                 ],
                 correct: 1,
-                explanation: "Fig. 6.18: Sequential transfers automatically target incrementing memory addresses N, N+1, N+2 inside the slave."
+                explanation: ": Sequential transfers automatically target incrementing memory addresses N, N+1, N+2 inside the slave."
             }
         ];
 
@@ -728,15 +715,14 @@
             }
         }
 
-        // --- Multi-Mode Register Simulator Logic (Fig 6.18) ---
+        // --- Multi-Mode Register Simulator Logic ---
         let simStep = 0;
         let isPlaying = false;
         let playTimer = null;
 
         const blockCanvas = document.getElementById('blockCanvas');
         const blockCtx = blockCanvas.getContext('2d');
-        const scopeCanvas = document.getElementById('scopeCanvas');
-        const scopeCtx = scopeCanvas.getContext('2d');
+
 
         function getSequenceSteps() {
             const mode = document.getElementById('sim-mode').value;
@@ -781,8 +767,8 @@
             blockCtx.clearRect(0, 0, blockCanvas.width, blockCanvas.height);
             const mode = document.getElementById('sim-mode').value;
             document.getElementById('block-seq-title').innerText = mode === 'write' 
-                ? 'Fig 6.18 (a): Sequential Write to Slave Registers' 
-                : 'Fig 6.18 (b): Sequential Read from Slave Registers';
+                ? 'Sequential Write to Slave Registers' 
+                : 'Sequential Read from Slave Registers';
 
             const marginX = 20;
             const startY = 25;
@@ -794,7 +780,7 @@
                 const x = marginX + idx * stepWidth;
                 const w = stepWidth - 3;
 
-                // Determine Block Color based on Fig 6.18 specs
+                // Determine Block Color based on specs
                 let fill = '#1e293b';
                 let stroke = '#475569';
                 let textCol = '#f8fafc';
@@ -845,102 +831,7 @@
             });
         }
 
-        function drawOscilloscope(steps) {
-            scopeCtx.clearRect(0, 0, scopeCanvas.width, scopeCanvas.height);
 
-            const marginX = 20;
-            const totalAvailableWidth = scopeCanvas.width - marginX * 2;
-            const stepWidth = totalAvailableWidth / steps.length;
-
-            const sclHigh = 35;
-            const sclLow = 75;
-            const sdaHigh = 115;
-            const sdaLow = 155;
-
-            // Signal Grid Lines
-            scopeCtx.strokeStyle = '#1e293b';
-            scopeCtx.lineWidth = 1;
-            for (let i = 0; i <= steps.length; i++) {
-                const x = marginX + i * stepWidth;
-                scopeCtx.beginPath();
-                scopeCtx.moveTo(x, 15);
-                scopeCtx.lineTo(x, 165);
-                scopeCtx.stroke();
-            }
-
-            // Labels
-            scopeCtx.font = 'bold 10px Fira Code, monospace';
-            scopeCtx.fillStyle = '#3b82f6';
-            scopeCtx.fillText('RC3/SCL', 5, sclHigh + 15);
-            scopeCtx.fillStyle = '#ec4899';
-            scopeCtx.fillText('RC4/SDA', 5, sdaHigh + 15);
-
-            // Active step background fill
-            const activeX = marginX + simStep * stepWidth;
-            scopeCtx.fillStyle = 'rgba(56, 189, 248, 0.08)';
-            scopeCtx.fillRect(activeX, 15, stepWidth, 150);
-
-            // Render SCL Waveform
-            scopeCtx.beginPath();
-            scopeCtx.strokeStyle = '#3b82f6';
-            scopeCtx.lineWidth = 2.5;
-
-            for (let i = 0; i < steps.length; i++) {
-                const x = marginX + i * stepWidth;
-                const type = steps[i].type;
-
-                if (i === 0) { // IDLE
-                    scopeCtx.moveTo(x, sclHigh);
-                    scopeCtx.lineTo(x + stepWidth, sclHigh);
-                } else if (type === 'start' || type === 'stop') {
-                    scopeCtx.lineTo(x, sclHigh);
-                    scopeCtx.lineTo(x + stepWidth * 0.7, sclHigh);
-                    scopeCtx.lineTo(x + stepWidth, type === 'start' ? sclLow : sclHigh);
-                } else { // Data transfer clock pulse
-                    scopeCtx.lineTo(x, sclLow);
-                    scopeCtx.lineTo(x + stepWidth * 0.2, sclHigh);
-                    scopeCtx.lineTo(x + stepWidth * 0.8, sclHigh);
-                    scopeCtx.lineTo(x + stepWidth, sclLow);
-                }
-            }
-            scopeCtx.stroke();
-
-            // Render SDA Waveform
-            scopeCtx.beginPath();
-            scopeCtx.strokeStyle = '#ec4899';
-            scopeCtx.lineWidth = 2.5;
-
-            for (let i = 0; i < steps.length; i++) {
-                const x = marginX + i * stepWidth;
-                const type = steps[i].type;
-
-                if (i === 0) { // IDLE
-                    scopeCtx.moveTo(x, sdaHigh);
-                    scopeCtx.lineTo(x + stepWidth, sdaHigh);
-                } else if (type === 'start') { // SDA drops while SCL HIGH
-                    scopeCtx.lineTo(x, sdaHigh);
-                    scopeCtx.lineTo(x + stepWidth * 0.3, sdaHigh);
-                    scopeCtx.lineTo(x + stepWidth * 0.5, sdaLow);
-                    scopeCtx.lineTo(x + stepWidth, sdaLow);
-                } else if (type === 'stop') { // SDA rises while SCL HIGH
-                    scopeCtx.lineTo(x, sdaLow);
-                    scopeCtx.lineTo(x + stepWidth * 0.5, sdaLow);
-                    scopeCtx.lineTo(x + stepWidth * 0.7, sdaHigh);
-                    scopeCtx.lineTo(x + stepWidth, sdaHigh);
-                } else if (type === 'ack' || type === 'ack_m') { // Driven LOW
-                    scopeCtx.lineTo(x, sdaLow);
-                    scopeCtx.lineTo(x + stepWidth, sdaLow);
-                } else if (type === 'nack_m') { // Left HIGH
-                    scopeCtx.lineTo(x, sdaHigh);
-                    scopeCtx.lineTo(x + stepWidth, sdaHigh);
-                } else { // Address/Data toggles
-                    const lev = (i % 2 === 0) ? sdaHigh : sdaLow;
-                    scopeCtx.lineTo(x, lev);
-                    scopeCtx.lineTo(x + stepWidth, lev);
-                }
-            }
-            scopeCtx.stroke();
-        }
 
         function updateSimUI() {
             const steps = getSequenceSteps();
@@ -948,7 +839,7 @@
             if (simStep < 0) simStep = 0;
 
             drawBlockDiagram(steps);
-            drawOscilloscope(steps);
+
 
             const curr = steps[simStep];
             const badge = document.getElementById('sim-status-badge');
