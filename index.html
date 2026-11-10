@@ -132,7 +132,7 @@
                         The <strong>I²C (Inter-Integrated Circuit)</strong> interface allows microcontrollers to communicate with peripheral devices using two designated pins: <strong>RC3/SCL</strong> (Serial Clock) and <strong>RC4/SDA</strong> (Serial Data).
                     </p>
                     <p class="text-slate-300 text-sm leading-relaxed">
-                        When I²C mode is enabled, these pins operate as <strong>Open-Drain</strong> outputs. Pull-up resistors to $V_{DD}$ ensure that when the bus is idle, both lines default to a <strong>HIGH logic state</strong>.
+                        When I²C mode is enabled, these pins operate as <strong>Open-Drain</strong> outputs. Pull-up resistors to V<sub>DD</sub> ensure that when the bus is idle, both lines default to a <strong>HIGH logic state</strong>.
                     </p>
                     <div class="p-4 bg-slate-950/60 border border-slate-800 rounded-xl space-y-2 text-xs">
                         <div class="font-semibold text-slate-200">Microcontroller Hardware Interface:</div>
@@ -151,7 +151,7 @@
                         </div>
                         <h4 class="font-semibold text-white text-sm mb-1">7-Bit Addressing + R/W Bit</h4>
                         <p class="text-xs text-slate-400 leading-relaxed">
-                            The LSB of the first address byte ($R/\overline{W}$) dictates whether the master will <strong>Write (0)</strong> or <strong>Read (1)</strong> from the slave device.
+                            The LSB of the first address byte (R/<span style="text-decoration:overline">W</span>) dictates whether the master will <strong>Write (0)</strong> or <strong>Read (1)</strong> from the slave device.
                         </p>
                     </div>
 
@@ -181,7 +181,7 @@
                         </div>
                         <h4 class="font-semibold text-white text-sm mb-1">Auto-Increment Registers</h4>
                         <p class="text-xs text-slate-400 leading-relaxed">
-                            Subsequent data bytes automatically write or read sequential slave memory registers ($N, N+1, N+2$).
+                            Subsequent data bytes automatically write or read sequential slave memory registers (N, N+1, N+2).
                         </p>
                     </div>
                 </div>
@@ -241,7 +241,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="font-semibold text-slate-100">Interactive Circuit Schematic</h3>
-                            <p class="text-xs text-slate-400">Open-drain configuration with Pull-up Resistors ($R_P$) to $V_{DD}$</p>
+                            <p class="text-xs text-slate-400">Open-drain configuration with Pull-up Resistors (R<sub>P</sub>) to V<sub>DD</sub></p>
                         </div>
                     </div>
 
@@ -338,7 +338,7 @@
 
                     <p class="text-xs text-slate-400">
                         <i class="fa-solid fa-lightbulb text-amber-400 mr-1"></i>
-                        <strong>Open-Drain Architecture:</strong> Devices can only actively pull lines <strong>LOW</strong> (to Ground). When no device is pulling down, the pull-up resistors passively pull SDA & SCL <strong>HIGH</strong> ($V_{DD}$).
+                        <strong>Open-Drain Architecture:</strong> Devices can only actively pull lines <strong>LOW</strong> (to Ground). When no device is pulling down, the pull-up resistors passively pull SDA & SCL <strong>HIGH</strong> (V<sub>DD</sub>).
                     </p>
                 </div>
 
