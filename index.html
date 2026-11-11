@@ -129,7 +129,7 @@
                         <i class="fa-solid fa-circle-info"></i> Microcontroller Pins & Open-Drain Drivers
                     </h3>
                     <p class="text-slate-300 text-sm leading-relaxed">
-                        The <strong>I²C (Inter-Integrated Circuit)</strong> interface allows microcontrollers to communicate with peripheral devices using two designated pins: <strong>RC3/SCL</strong> (Serial Clock) and <strong>RC4/SDA</strong> (Serial Data).
+                        The <strong>I²C (Inter-Integrated Circuit)</strong> interface allows microcontrollers to communicate with peripheral devices using two designated pins: <strong>SCL</strong> (Serial Clock) and <strong>SDA</strong> (Serial Data).
                     </p>
                     <p class="text-slate-300 text-sm leading-relaxed">
                         When I²C mode is enabled, these pins operate as <strong>Open-Drain</strong> outputs. Pull-up resistors to V<sub>DD</sub> ensure that when the bus is idle, both lines default to a <strong>HIGH logic state</strong>.
@@ -628,7 +628,7 @@
         "To change the transmission speed from 100 kbit/s to 400 kbit/s"
     ],
     correct: 1,
-    explanation: "A Repeated START allows the Master to re-address the Slave and change direction from Write (setting the register pointer) to Read without losing ownership of the bus."
+    explanation: "A Repeated START allows the Master to re-address the Slave and change direction from Write (setting the register pointer) to Read without losing ownership of the bus. In I²C, Write mode does not necessarily mean writing data into a register. It means that the Master is sending information to the Slave."
 },
             {
                 id: 2,
@@ -636,8 +636,8 @@
                 options: [
                     "Generating a STOP condition followed by 500ms delay",
                     "Generating a Repeated START condition (Sr)",
-                    "Sending a NACK signal on RC4/SDA pin",
-                    "Toggling RC3/SCL pin 9 times"
+                    "Sending a NACK signal on SDA pin",
+                    "Toggling SCL pin 9 times"
                 ],
                 correct: 1,
                 explanation: "A Repeated START condition (Sr / S) re-initializes communication in Read mode without sending a STOP condition."
@@ -733,8 +733,8 @@
 
             if (mode === 'write') {
                 return [
-                    { label: 'IDLE', type: 'idle', owner: 'bus', title: '1) Bus Idle Check', desc: 'Master checks that lines RC3/SCL and RC4/SDA are both HIGH.' },
-                    { label: 'S', type: 'start', owner: 'master', title: '2) START Condition (S)', desc: 'Master pulls RC4/SDA LOW while RC3/SCL is HIGH to claim the bus.' },
+                    { label: 'IDLE', type: 'idle', owner: 'bus', title: '1) Bus Idle Check', desc: 'Master checks that lines SCL and SDA are both HIGH.' },
+                    { label: 'S', type: 'start', owner: 'master', title: '2) START Condition (S)', desc: 'Master pulls RC4/SDA LOW while SCL is HIGH to claim the bus.' },
                     { label: `${slaveAddr}`, sub: 'W (0)', type: 'addr', owner: 'master', title: '3) 7-Bit Slave Address + W (0)', desc: `Master broadcasts Slave Address ${slaveAddr} with R/W=0 (Write mode).` },
                     { label: 'ACK', type: 'ack', owner: 'slave', title: '4) ACK from Slave', desc: 'Addressed Slave recognizes its address and pulls SDA LOW during the 9th clock pulse.' },
                     { label: `Reg ${regAddr}`, sub: 'Address N', type: 'reg', owner: 'master', title: '5) Register Address N', desc: `Master transmits target Register Address ${regAddr} into the slave.` },
@@ -747,7 +747,7 @@
                 ];
             } else {
                 return [
-                    { label: 'IDLE', type: 'idle', owner: 'bus', title: '1) Bus Idle Check', desc: 'Master verifies lines RC3/SCL and RC4/SDA are HIGH.' },
+                    { label: 'IDLE', type: 'idle', owner: 'bus', title: '1) Bus Idle Check', desc: 'Master verifies lines SCL and SDA are HIGH.' },
                     { label: 'S', type: 'start', owner: 'master', title: '2) START Condition (S)', desc: 'Master initiates transaction by pulling RC4/SDA LOW.' },
                     { label: `${slaveAddr}`, sub: 'W (0)', type: 'addr', owner: 'master', title: '3) 7-Bit Address + W (0)', desc: `Master transmits Slave Address ${slaveAddr} with Write bit to set register pointer.` },
                     { label: 'ACK', type: 'ack', owner: 'slave', title: '4) ACK from Slave', desc: 'Slave acknowledges device address.' },
